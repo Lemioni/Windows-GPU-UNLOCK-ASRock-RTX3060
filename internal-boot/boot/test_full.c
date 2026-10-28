@@ -1,3 +1,4 @@
+/* ASRock port changes: 2026-10-27; publication notice: 2026-10-28. GPL-2.0-only; see CHANGES.md. */
 /* GPL-2.0-only. Actual ownership graph and ROM/driver fixtures, host RAM only. */
 #define GU_FULL_REPLAY_TEST
 #define main ConsoleSuiteMain
@@ -14,7 +15,7 @@ static EFI_DRIVER_BINDING_PROTOCOL NvBinding;
 static EFI_LOADED_IMAGE_PROTOCOL NvImage;
 static UINT8 NvPath[32];
 #else
-static UINT8 MouseMemory[0x9000],NvMemory[0x2b6e0],PromMemory[1048576];
+static UINT8 MouseMemory[GU_EDID_IMAGE_SIZE],NvMemory[GU_NVGOP_IMAGE_SIZE],PromMemory[1048576];
 static EFI_DRIVER_BINDING_PROTOCOL MouseBinding,NvBinding;
 static EFI_LOADED_IMAGE_PROTOCOL MouseImage,NvImage;
 static UINT8 MousePath[24],NvPath[32];
@@ -135,13 +136,13 @@ static EFI_STATUS ExtraDisconnect(EFI_HANDLE h,EFI_HANDLE agent,EFI_HANDLE child
     if(FullScenario==14)Live.Edges[0].Count++;
   }
 #else
-  if(Calls==3 || Calls==4) {
+  if(Calls==3 || (Calls==4 && FX_EXTRA_DISPLAY_CHILD)) {
     Check(h==(Calls==3?FX_Rtx:FX_EdidChild) && agent==FX_EdidAgent,"only each reviewed EDID child stopped");
     if(FullScenario==1 || (FullScenario==2 && Calls==4))return EFI_DEVICE_ERROR;
     if(FullScenario==29)return EFI_WARN_UNKNOWN_GLYPH;
     Drop(h,agent,&EdidGuid);Phase=3;
   }else {
-    Check(Calls==5 && h==FX_RtxPci && agent==FX_NvAgent,"NV stop only after two reviewed EDID stops");
+    Check(Calls==4+FX_EXTRA_DISPLAY_CHILD && h==FX_RtxPci && agent==FX_NvAgent,"NV stop only after all captured EDID stops");
     if(FullScenario==3)return EFI_DEVICE_ERROR;
     if(FullScenario==30){for(UINTN i=0;i<Live.Count;i++)if(Live.Edges[i].Handle==h && GuGuidEqual(&Live.Edges[i].Protocol,&PathGuid)){Live.Edges[i]=Live.Edges[--Live.Count];break;}return EFI_DEVICE_ERROR;}
     Drop(h,agent,&PciGuid);Drop(h,agent,&PathGuid);Phase=4;
@@ -230,8 +231,8 @@ static EFI_STATUS RunFull(int scenario) {
   NvImage.ImageBase=NvMemory;NvImage.ImageSize=sizeof(NvMemory);NvImage.ImageCodeType=EfiBootServicesCode;NvImage.DeviceHandle=FX_RtxPci;
 #else
   MouseBinding=(EFI_DRIVER_BINDING_PROTOCOL){0};NvBinding=MouseBinding;
-  MouseBinding.Version=1;MouseBinding.DriverBindingHandle=MouseBinding.ImageHandle=FX_EdidAgent;MouseBinding.Stop=(EFI_DRIVER_BINDING_STOP)(MouseMemory+0x157c);
-  NvBinding.Version=0x60008;NvBinding.DriverBindingHandle=NvBinding.ImageHandle=FX_NvAgent;NvBinding.Stop=(EFI_DRIVER_BINDING_STOP)(NvMemory+0x698);
+  MouseBinding.Version=1;MouseBinding.DriverBindingHandle=MouseBinding.ImageHandle=FX_EdidAgent;MouseBinding.Stop=(EFI_DRIVER_BINDING_STOP)(MouseMemory+GU_EDID_STOP);
+  NvBinding.Version=GU_NVGOP_VERSION;NvBinding.DriverBindingHandle=NvBinding.ImageHandle=FX_NvAgent;NvBinding.Stop=(EFI_DRIVER_BINDING_STOP)(NvMemory+GU_NVGOP_STOP);
   MouseImage=(EFI_LOADED_IMAGE_PROTOCOL){0};NvImage=MouseImage;
   MouseImage.ImageBase=MouseMemory;MouseImage.ImageSize=sizeof(MouseMemory);MouseImage.ImageCodeType=EfiRuntimeServicesCode;
   NvImage.ImageBase=NvMemory;NvImage.ImageSize=sizeof(NvMemory);NvImage.ImageCodeType=EfiBootServicesCode;NvImage.DeviceHandle=FX_RtxPci;
