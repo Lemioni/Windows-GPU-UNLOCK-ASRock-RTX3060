@@ -1,28 +1,5 @@
 # Windows GPU UNLOCK
 
-## Experimental ASRock B450M Pro4-F / RTX 3060 port
-
-This working tree extends the upstream Windows port for **ASRock B450M Pro4-F
-BIOS P10.31, Ryzen 5 3600, Gigabyte-subsystem RTX 3060 12GB GA106
-(`10de:2503`, `1458:4074`)**. One supervised USB unlock and direct Windows
-handoff were recorded on 2026-10-27. Matched PyTorch GEMM measurements showed
-approximately 74–79% higher FP16/BF16/TF32 throughput; this is not a gaming
-or general application performance claim.
-
-- [Port implementation, validation and limitations](docs/ASROCK-B450M-RTX3060.en.md)
-- [Sanitized hardware and benchmark evidence](evidence/asrock-b450m-3060/README.md)
-- [Publishing the source on GitHub — Czech](docs/PUBLISHING-ASROCK.cs.md)
-- [Portfolio description — Czech and English](docs/PORTFOLIO.cs.md)
-
-The original unlock algorithm and Windows/UEFI infrastructure belong to the
-upstream projects credited below. This is an AI-assisted, exact-machine port,
-not a new unlock technique. No NVIDIA firmware, PROM dumps, private fixtures,
-partition identifiers or machine-specific EFI executables are included in
-the prepared source publication package. A fresh checkout needs its own local
-captures and matching test evidence; it is not a ready-to-run universal installer.
-
-The upstream README follows.
-
 **English** | [한국어](README.ko.md)
 
 Experimental UEFI GPU unlock and direct Windows handoff, expanded through

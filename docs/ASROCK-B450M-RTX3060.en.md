@@ -154,4 +154,4 @@ Keep [LICENSE](../LICENSE), [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md),
 GPL-2.0-only; EDK2 and other components retain their own notices. This port does
 not grant redistribution rights for NVIDIA firmware. The prepared publication
 contains source and selected textual/numeric evidence only, not firmware or EFI
-binaries. Review [the publishing guide](PUBLISHING-ASROCK.cs.md) before uploading.
+binaries. Preserve upstream attribution and component-specific license notices.
