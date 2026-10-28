@@ -1,11 +1,13 @@
+# ASRock port changes: 2026-10-27; publication notice: 2026-10-28. GPL-2.0-only; see CHANGES.md.
 # GPL-2.0-only. Build the profile-less read-only USB probe (-DGU_PROBE_GENERIC) for a new machine.
 # The probe records every NVIDIA display controller, the console/driver graph, the 1 MiB PROM
 # (PROM.BIN) and loaded driver images (IMGnn.BIN) to the stick it booted from, then starts
 # Windows. It compiles only as a diagnostic build: no unlock code, GPU writes, driver release,
 # DMA or firmware variable writes. Builds files only.
 param([Parameter(Mandatory)][guid]$WindowsEspGuid,[string]$Clang='clang',[string]$LldLink='lld-link',[string]$Python='python',
-      [ValidateRange(1,255)][int]$TargetBus=1)
+      [ValidateRange(1,255)][int]$TargetBus=1,[switch]$Asrock3060)
 $ErrorActionPreference='Stop'
+if($Asrock3060 -and $TargetBus -ne 7){throw 'ASRock diagnostic requires PCI bus 7'}
 $repo=[IO.Path]::GetFullPath((Join-Path $PSScriptRoot '../..'))
 $boot=Join-Path $repo 'internal-boot/boot'
 function GuidC([guid]$Value){
@@ -26,6 +28,7 @@ try {
  New-Item -ItemType Directory -Path $out -Force | Out-Null
  $sources=@('handoff.c','diagnostic.c','../efi_runtime.c','probe.c','../unlock/sha256.c')
  $defines=@('-DGU_DIAGNOSTIC_ONLY','-DGU_DIAGNOSTIC_PROBE','-DGU_PROBE_GENERIC','-DGU_USB_PROBE')
+ if($Asrock3060){$defines+=@('-DGU_PROBE_ASROCK_3060','-DGU_PROBE_DUMP_PROM','-DGU_USB_MEDIA')}
  if($TargetBus -ne 1){$defines+=('-DGU_PROBE_BUS=0x{0:x}U' -f $TargetBus)}
  $objects=@()
  foreach($source in $sources) {
@@ -40,7 +43,7 @@ try {
  if($LASTEXITCODE -ne 0){throw 'Probe PE verification failed'}
  [ordered]@{Mode='generic-read-only-probe-then-windows-usb';CanUnlock=$false;CanDetach=$false;WritesFirmwareVariables=$false;HardwareTested=$false;Defines=$defines
   EfiSha256=(Get-FileHash -LiteralPath "$out/BOOTX64.EFI").Hash.ToLowerInvariant();BuiltUtc=[DateTime]::UtcNow.ToString('o')
-  Sources=@(($sources+@('diagnostic.h','media.h','probe.h')) | ForEach-Object {[ordered]@{Path=$_;Sha256=(Get-FileHash -LiteralPath $_).Hash.ToLowerInvariant()}})
+  Sources=@(($sources+@('diagnostic.h','media.h','probe.h','asrock-probe.h','../unlock/machine-profile.h')) | ForEach-Object {[ordered]@{Path=$_;Sha256=(Get-FileHash -LiteralPath $_).Hash.ToLowerInvariant()}})
  } | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath "$out/manifest.json" -Encoding utf8
  "Built generic read-only probe $out/BOOTX64.EFI; hardware untested."
 } finally {Pop-Location}
