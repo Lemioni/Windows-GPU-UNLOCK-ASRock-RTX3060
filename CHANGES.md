@@ -1,5 +1,20 @@
 # Changes
 
+## 2026-10-27 implementation / 2026-10-28 documentation — experimental ASRock RTX 3060
+
+- Add an exact-machine, USB-only ASRock B450M Pro4-F P10.31 / GA106 RTX 3060
+  `10de:2503`, subsystem `1458:4074`, PCI bus 7 profile, derived from local captures.
+- Add a bounded, read-only capture identity, PROM inspection bridge and research
+  candidate extraction tools. Preserve generic-probe restrictions for other cards.
+- Add ASRock host replay tests and source/fixture-bound build and staging evidence.
+- Generalize host release fixtures to captured image sizes, driver offsets and
+  one/two EDID-child layouts; rename a test counter that collided with MinGW `gets`.
+- Add a standalone CUDA PyTorch GEMM benchmark and Windows launcher.
+- Document one successful supervised hardware transaction, matched benchmark
+  results, attribution, private artifacts and the limits of the evidence.
+- Preserve upstream licensing and notices. No general hardware support or new
+  unlock algorithm is claimed. See docs/ASROCK-B450M-RTX3060.en.md.
+
 ## Unreleased — offline compatibility reports and comparison
 
 - Add a Python-only, read-only checker for existing probe captures. Reuse the
