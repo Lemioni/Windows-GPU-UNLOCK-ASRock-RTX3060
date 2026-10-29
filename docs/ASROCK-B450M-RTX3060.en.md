@@ -7,6 +7,10 @@ Implemented and tested on 2026-10-27; documented on 2026-10-28.
 This is an exact-machine extension of
 [impacifist/Windows-GPU-UNLOCK](https://github.com/impacifist/Windows-GPU-UNLOCK),
 based on commit `20c44fecac13cdf601b6a9357a46d8fea29f2678`.
+On 2026-10-29 the PR branch was integrated with upstream
+`23cc028512acbb873cff8de38acdd63c66c98ea9`. The hardware observations below
+remain tied to the original development tree; the integrated revision has no new
+physical boot or performance measurement.
 The retained unlock core comes from [Zagitta/gpu-unlock](https://github.com/Zagitta/gpu-unlock).
 [PR #30](https://github.com/impacifist/Windows-GPU-UNLOCK/pull/30), the upstream
 H610M/GA106 RTX 3060 port, informed the diagnostic and headless USB approach.
@@ -64,8 +68,8 @@ behavior and sustained unattended operation are not established here.
 | `research/profile/prepare-host-assets.py` | Python 3.14 Zstandard extraction adapter; retain pinned upstream generation and hash checks |
 | `benchmark/pytorch-benchmark.py`, `Run-PyTorch-Test.cmd` | Repeatable four-mode GEMM measurements with numerical checks and JSON output |
 
-The ASRock profile is a separate experimental path. The GA102-only automatic local
-profile generator's proven envelope remains unchanged. A research candidate is not
+The ASRock profile is a separate experimental path. This port does not add its
+`2503` identity to generic capture or automatic local-profile admission. A research candidate is not
 used as write-build evidence. The profile's historical hardware-untested comments
 and build-manifest flags describe the pre-test artifact; subsequent hardware
 observations are recorded separately in the evidence directory.
@@ -96,6 +100,25 @@ Recorded host validation includes:
 These are software checks, not fourteen hardware boots. One successful hardware
 transaction and Windows return were subsequently recorded. See
 [public evidence](../evidence/asrock-b450m-3060/README.md).
+
+### Integration checks, 2026-10-29
+
+Against integrated upstream `23cc028512acbb873cff8de38acdd63c66c98ea9`:
+
+- All 14 source-bound ASRock host jobs passed, including 575 console replay checks,
+  112 transaction scenarios, 4,624 release checks and 207 cold pre-check cases.
+- Ten family/profile test methods and 37 diagnostic CLI/build/resume cases passed,
+  including ASRock bus-7 admission and wrong/missing-bus refusals.
+- Eight Python regression suites passed 84 test methods. Native/Python GPU-path
+  comparison passed 5,078 native checks and 10,024 matching decisions.
+- Ten synthetic aggregate LOCAL configurations passed preparation, release,
+  cold-state and foreign-profile refusal checks.
+- Both USB child and wrapper compiled and passed PE verification with synthetic
+  partition services and a dummy Windows ESP GUID. These artifacts must not be
+  booted or distributed as a usable package.
+
+All these checks are host simulations/builds. No GPU transaction, new Windows
+handoff, lifecycle validation or benchmark was performed on this integrated revision.
 
 ## Reproduction boundaries
 

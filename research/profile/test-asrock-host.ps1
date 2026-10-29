@@ -76,7 +76,7 @@ try {
  '-D_CRT_SECURE_NO_WARNINGS','-DGU_ASROCK_HOST_TEST','-DGU_PROFILE_ASROCK_B450M_3060','-D__KERNEL__','-DGU_UEFI_PORT',
  '-DGU_TARGET_PCI_ID=0x250310deU','-DGU_INTERNAL_BOOT','-DGU_EXPERIMENTAL_3090','-DGU_ENTRY_LATCHED_SS1_FULL',
  '-Icompat','-I',$out,'-I../../deps/edk2/MdePkg/Include','-I../../deps/edk2/MdePkg/Include/X64')
- & $Clang @txFlags tests/test_efi_transaction.c @core -o (Join-Path $out 'transaction.exe')
+ & $Clang @txFlags tests/test_efi_transaction.c checks.c @core -o (Join-Path $out 'transaction.exe')
  if($LASTEXITCODE -ne 0){throw 'Transaction compile failed'}
  $result=& (Join-Path $out 'transaction.exe') (Join-Path $capturePath.FullName 'PROM.BIN') $assets $cold 2>&1 | Out-String
  $exitCode=$LASTEXITCODE
